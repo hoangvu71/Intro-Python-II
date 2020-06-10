@@ -1,5 +1,5 @@
 from room import Room
-
+from player import Player as Player
 # Declare all the rooms
 
 room = {
@@ -38,13 +38,45 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
-
+heroSim = Player("Sim", room['foyer'].s_to)
 # Write a loop that:
 #
 # * Prints the current room name
 # * Prints the current description (the textwrap module might be useful here).
 # * Waits for user input and decides what to do.
-#
+
+def moving(player, input):
+    if ( player.location == room['outside']) and (input == 'n'):
+        player.location = room['outside'].n_to
+    elif ( player.location == room['foyer']) and (input == 's'):
+        player.location = room['foyer'].s_to
+    elif ( player.location == room['foyer']) and (input == 'n'):
+        player.location = room['foyer'].n_to
+    elif ( player.location == room['foyer']) and (input == 'e'):
+        player.location = room['foyer'].e_to
+    elif ( player.location == room['overlook']) and (input == 's'):
+        player.location = room['overlook'].s_to
+    elif ( player.location == room['narrow']) and (input == 'n'):
+        player.location = room['narrow'].n_to
+    elif ( player.location == room['narrow']) and (input == 'w'):
+        player.location = room['narrow'].w_to
+    elif ( player.location == room['treasure']) and (input == 's'):
+        player.location = room['treasure'].s_to
+    elif input != 'n' or input != 's' or input != 'w' or input != 'e':
+        print("Please enter a direction. n s w e for north south west east")
+    else:
+        print("This path is not cleared!")
+        print("You stay at the same place.")
+def adventure(player):
+    while(True):
+        print(player)
+        userInput = input("Where you want to go?")
+        moving(player, userInput)
+        if userInput == 'q':
+            return 'Exiting'
+
+print(adventure(heroSim))
+
 # If the user enters a cardinal direction, attempt to move to the room there.
 # Print an error message if the movement isn't allowed.
 #
