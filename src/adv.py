@@ -1,5 +1,8 @@
 from room import Room
 from player import Player as Player
+from item import Item
+from tools import *
+
 # Declare all the rooms
 
 room = {
@@ -21,6 +24,11 @@ chamber! Sadly, it has already been completely emptied by
 earlier adventurers. The only exit is to the south."""),
 }
 
+items = {
+    "knife": Item("knife", "Cut and slice"),
+    "pen": Item("pen", "Write something?"),
+    "pot": Item("pot", "hold and hot")
+}
 
 # Link rooms together
 
@@ -34,11 +42,9 @@ room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
 # Add Items
-room['outside'].items = ['rocks', 'trees', 'pickaxe']
-room['foyer'].items = ['shinyrocks', 'butterfly']
-room['overlook'].items = ['sword']
-room['narrow'].items = ['seaweed', 'gold']
-room['treasure'].items = ['emptychest'] 
+room['outside'].items.append(items['knife'])
+room['outside'].items.append(items['pen'])
+room['foyer'].items = items['pot']
 #
 # Main
 #
@@ -52,30 +58,50 @@ heroSim = Player("Sim", room['foyer'].s_to)
 # * Prints the current description (the textwrap module might be useful here).
 # * Waits for user input and decides what to do.
 
+
+#-----------Main--------#
 def adventure(player):
     while(True):
-        print("You arrived at",player.current_room)
-        if player.current_room.items is not None:
-            print("You see", player.current_room.items)
-        userInput = input("Where do you want to go?")
-        verb = userInput.split()[0]
-        print(verb)
-        if userInput not in "n s w e".split():
-            print("*****Please enter a direction with the letters 'n' 's' 'w' 'e'*****")
-        if hasattr(player.current_room, f'{userInput}_to'):
-            if userInput == 'n' and player.current_room.n_to is not None:
-                player.current_room = player.current_room.n_to
-            elif userInput == 'w' and player.current_room.w_to is not None:
-                player.current_room = player.current_room.w_to
-            elif userInput == 'e' and player.current_room.e_to is not None:
-                player.current_room = player.current_room.e_to
-            elif userInput == 's' and player.current_room.s_to is not None:
-                player.current_room = player.current_room.s_to
-            else:
-                print("*****That was is blocked!*****")
-        if userInput == 'q':
-            print("*****Exiting...*****")
+        print("-----------------------------")
+        # 1.0 Display player's location
+        location = player.current_room
+        
+        print("\nPlayer's location: ",player.current_room,"\n")
+
+        # 1.1 Display rooms items if any
+        if location.items is not None:
+            listItems = ""
+            for item in location.items:
+                listItems += f"{item.name}, "
+            listItems = listItems[:-2]
+            listItems += "."
+            print(f"You see {listItems}")
+            
+
+        # 1.2 Display user's items if any
+
+        if len(player.items) != 0:
+            listItems = ""
+            for item in player.items:
+                listItems += f"{item.name}, "
+            listItems = listItems[:-2]
+            listItems += "."
+            print(f"Inventory {listItems}")
+
+        # 2.0 Ask user what to do
+        userInput = askUser()
+        
+        # 2.1 userInput == 0 means that player presses 'q'
+        if userInput == 0:
             return 0
+        # 3.0 Take or drop item
+        takeDropItem(userInput, player)
+
+        
+        
+        if hasattr(player.current_room, f'{userInput}_to'):
+            moving(userInput, player)
+        
 adventure(heroSim)
 # If the user enters a cardinal direction, attempt to move to the room there.
 # Print an error message if the movement isn't allowed.
