@@ -33,12 +33,19 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
+# Add Items
+room['outside'].items = ['rocks', 'trees', 'pickaxe']
+room['foyer'].items = ['shinyrocks', 'butterfly']
+room['overlook'].items = ['sword']
+room['narrow'].items = ['seaweed', 'gold']
+room['treasure'].items = ['emptychest'] 
 #
 # Main
 #
 
 # Make a new player object that is currently in the 'outside' room.
 heroSim = Player("Sim", room['foyer'].s_to)
+
 # Write a loop that:
 #
 # * Prints the current room name
@@ -48,7 +55,11 @@ heroSim = Player("Sim", room['foyer'].s_to)
 def adventure(player):
     while(True):
         print("You arrived at",player.current_room)
+        if player.current_room.items is not None:
+            print("You see", player.current_room.items)
         userInput = input("Where do you want to go?")
+        verb = userInput.split()[0]
+        print(verb)
         if userInput not in "n s w e".split():
             print("*****Please enter a direction with the letters 'n' 's' 'w' 'e'*****")
         if hasattr(player.current_room, f'{userInput}_to'):
