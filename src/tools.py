@@ -45,29 +45,24 @@ def takeDropItem(userInput, player):
         # Object in the second word
         item = userInput.split()[1]
 
-        if verb == 'take':
-            isItemInList = itemInList(item, location.items)
-            if isItemInList:            
-                # Find index of item in the room
-                for i in range(len(location.items)):
-                    print(i)
-                    if location.items[i].name == item:
-                        itemIndex = i
+        if verb == 'take' and itemInList(item, location.items):
+            # Find index of item in the room
+            for i in range(len(location.items)):
+                if location.items[i].name == item:
+                    itemIndex = i
+                            
+                    # Add that item to player        
+                    player.items.append(location.items[itemIndex])
                         
-                        # Add that item to player        
-                        player.items.append(location.items[itemIndex])
-                    
-                        # Remove that item from room
-                        location.items.remove(location.items[itemIndex])
-                        return print(player.items[-1].on_take)                
-                
-        if verb == 'drop':
-            if item not in player.items:
-                print("Item does not exist")
-                return 1
-            # Find index of item on player
+                    # Remove that item from room
+                    location.items.remove(location.items[itemIndex])
+                    return print(player.items[-1].on_take)              
+        elif verb == 'take' and not itemInList(item, location.items):
+            print(f'No {item} in here')
+
+        elif verb == 'drop' and  itemInList(item, player.items):
             for i in range(len(player.items)):
-                if player.items[i] == item:
+                if player.items[i].name == item:
                     itemIndex = i
 
                     # Add that item to room
@@ -75,8 +70,12 @@ def takeDropItem(userInput, player):
 
                     # Remove that item from player
                     player.items.remove(player.items[itemIndex])
-        print("Player's items: ", player.items)
+                    return print(location.items[-1].on_drop)
 
+        elif verb == 'drop' and not itemInList(item, player.items):
+            print(f'You don\'t have {item}')
+    
+#-----------Is Item In List?---------#
 def itemInList(item, listItems):
     for stuff in listItems:
         if item in stuff.name:

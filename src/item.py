@@ -6,4 +6,9 @@ class Item():
 
     @property
     def on_take(self):
-        return f'You have picked up {self.name}'
+        return f'-----------------------------\nYou have picked up {self.name}'
+
+    @property
+    def on_drop(self):
+        return f'-----------------------------\nYou have dropped {self.name}'
+
